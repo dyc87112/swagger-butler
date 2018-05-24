@@ -2,7 +2,13 @@
 
 Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通过构建一个简单的Spring Boot应用，增加一些配置就能将现有整合了Swagger的Web应用的API文档都汇总到一起，方便查看与测试。
 
-- 项目地址：https://github.com/dyc87112/swagger-butler
+**项目地址**
+
+- Github：https://github.com/dyc87112/swagger-butler
+- Gitee：https://gitee.com/didispace/swagger-butler
+
+**推荐内容**
+
 - 我的博客：http://blog.didispace.com
 - 我们社区：http://www.spring4all.com
 - 知识星球（深度交流与问答）：https://t.xiaomiquan.com/zfEiY3v

@@ -4,7 +4,11 @@ Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通�
 
 - 项目地址：https://github.com/dyc87112/swagger-butler
 - 我的博客：http://blog.didispace.com
-- 我们社区：http://spring4all.com
+- 我们社区：http://www.spring4all.com
+- 知识星球（深度交流与问答）：https://t.xiaomiquan.com/zfEiY3v
+- Spring Boot基础教程：http://blog.didispace.com/Spring-Boot%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/
+- Spring Cloud基础教程：http://blog.didispace.com/Spring-Cloud%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/
+- 公益调试Eureka：http://eureka.didispace.com
 
 # 使用手册
 
@@ -176,3 +180,7 @@ spring.cloud.consul.port=8500
 # 贡献者
 
 - [程序猿DD](https://github.com/dyc87112)
+
+# 公众号
+
+![干货分享](http://git.oschina.net/uploads/images/2017/0105/082137_85109d07_437188.jpeg)

@@ -51,6 +51,9 @@ public class StaticApplication {
 **第四步**：配置文件中增加Swagger文档的地址配置
 
 ```properties
+spring.application.name=swagger-butler-example-static
+server.port=11000
+
 zuul.routes.service-a.path=/service-a/**
 zuul.routes.service-a.url=http://localhost:10010/
 swagger.butler.resources[0].name=service-a
@@ -66,9 +69,9 @@ swagger.butler.resources[1].swagger-version=2.0
 
 上面配置了两个文档位置，由于这里还没有引入服务发现机制，所以需要先用zuul来配置访问本应用请求被转发到具体服务的路由规则。然后在配置resource信息指向具体的获取swagger的json配置文档的接口链接。
 
-**第五步**：
+**第五步**：访问`http://localhost:11000/swagger-ui.html`
 
-![]()
+![Example](https://github.com/dyc87112/swagger-butler/blob/master/static/example.png)
 
 > 代码示例具体可见`swagger-butler-example-static`目录
 

@@ -1,8 +1,8 @@
 package com.didispace.swagger.butler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.netflix.zuul.filters.Route;
+import org.springframework.cloud.netflix.zuul.filters.RouteLocator;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 
@@ -12,31 +12,52 @@ import java.util.List;
 public class SwaggerResourcesProcessor implements SwaggerResourcesProvider {
 
     @Autowired
-    private DiscoveryClient discoveryClient;
+    private RouteLocator routeLocator;
 
     @Autowired
     private SwaggerButlerProperties swaggerButlerConfig;
 
     @Override
     public List<SwaggerResource> get() {
-        List resources = new ArrayList<>();
+        List<SwaggerResource> resources = new ArrayList<>();
 
-        // 绝对路径的配置加载
-        for(SwaggerResourceProperties properties : swaggerButlerConfig.getResources()) {
-            resources.add(swaggerResource(properties.getName(), properties.getUrl(), properties.getSwaggerVersion()));
-        }
+        List<Route> routes = routeLocator.getRoutes();
+        for (Route route : routes) {
+            String routeName = route.getId();
 
-        // 基于服务发现的配置加载
-        for (String serviceName : discoveryClient.getServices()) {
+            SwaggerResourceProperties resourceProperties = swaggerButlerConfig.getResources().get(routeName);
 
-            List<ServiceInstance> instances= discoveryClient.getInstances(serviceName);
-            if(instances.size() == 0 && swaggerButlerConfig.getNotShowNoInstanceService()) {
-                // 没有服务实例跳过
+            // 不用根据zuul的路由自动生成，并且当前route信息没有配置resource则不生成文档
+            if (swaggerButlerConfig.getAutoGenerateFromZuulRoutes() == false && resourceProperties == null) {
                 continue;
             }
 
-            ServiceInstance instance = instances.get(0);
-            resources.add(swaggerResource(serviceName, "/" + serviceName + swaggerButlerConfig.getApiDocsPath(), "2.0"));
+            // 需要根据zuul的路由自动生成，但是当前路由名在忽略清单中（ignoreRoutes）或者不在生成清单中（generateRoutes）则不生成文档
+            if (swaggerButlerConfig.getAutoGenerateFromZuulRoutes() == true && swaggerButlerConfig.needIgnore(routeName)) {
+                continue;
+            }
+
+            // 处理swagger文档的名称
+            String name = routeName;
+            if (resourceProperties != null && resourceProperties.getName() != null) {
+                name = resourceProperties.getName();
+            }
+
+            // 处理获取swagger文档的路径
+            String swaggerPath = swaggerButlerConfig.getApiDocsPath();
+            if (resourceProperties != null && resourceProperties.getApiDocsPath() != null) {
+                swaggerPath = resourceProperties.getApiDocsPath();
+            }
+            String location = route.getFullPath().replace("**", swaggerPath);
+
+            // 处理swagger的版本设置
+            String swaggerVersion = swaggerButlerConfig.getSwaggerVersion();
+            if (resourceProperties != null && resourceProperties.getSwaggerVersion() != null) {
+                swaggerVersion = resourceProperties.getSwaggerVersion();
+            }
+
+            resources.add(swaggerResource(name, location, swaggerVersion));
+
         }
 
         return resources;

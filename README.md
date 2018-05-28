@@ -39,7 +39,7 @@ Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通�
     <dependency>
         <groupId>com.didispace</groupId>
         <artifactId>swagger-butler-core</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
 </dependencies>
 ```
@@ -81,7 +81,7 @@ swagger.butler.resources[1].swagger-version=2.0
 
 **第五步**：访问`http://localhost:11000/swagger-ui.html`
 
-![Example](https://github.com/dyc87112/swagger-butler/blob/master/static/example.png)
+![Example](https://github.com/dyc87112/swagger-butler/blob/master/static/example.png?raw=true)
 
 > 代码示例具体可见`swagger-butler-example-static`目录
 

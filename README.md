@@ -64,20 +64,28 @@ public class StaticApplication {
 spring.application.name=swagger-butler-example-static
 server.port=11000
 
-zuul.routes.service-a.path=/service-a/**
-zuul.routes.service-a.url=http://localhost:10010/
-swagger.butler.resources[0].name=service-a
-swagger.butler.resources[0].url=/service-a/v2/api-docs
-swagger.butler.resources[0].swagger-version=2.0
+# default config
+swagger.butler.api-docs-path=/v2/api-docs
+swagger.butler.swagger-version=2.0
 
-zuul.routes.service-b.path=/service-b/**
-zuul.routes.service-b.url=http://localhost:10020/
-swagger.butler.resources[1].name=service-b
-swagger.butler.resources[1].url=/service-b/v2/api-docs
-swagger.butler.resources[1].swagger-version=2.0
+# swagger resource
+zuul.routes.user.path=/service-a/**
+zuul.routes.user.url=http://localhost:10010/
+swagger.butler.resources.user.name=user-service
+
+# swagger resource
+zuul.routes.product.path=/service-b/**
+zuul.routes.product.url=http://localhost:10020/
+swagger.butler.resources.product.name=product-service
+swagger.butler.resources.product.api-docs-path=/xxx/v2/api-docs
+swagger.butler.resources.product.swagger-version=2.0
 ```
 
-上面配置了两个文档位置，由于这里还没有引入服务发现机制，所以需要先用zuul来配置访问本应用请求被转发到具体服务的路由规则。然后在配置resource信息指向具体的获取swagger的json配置文档的接口链接。
+上面配置了两个文档位置，由于这里还没有引入服务发现机制，所以Zuul的路由需要我们自己配置。然后在配置resource信息的时候，从1.1.0版本开始做了较大的调整，由于具体的访问路径是可以通过路由信息产生的，所以对于resource的配置信息只关注三个内容：
+
+- `name`：API文档在swagger中展现名称
+- `api-docs-path`：要获取的swagger文档的具体路径；如果不配置会使用全局的`swagger.butler.api-docs-path`配置，默认为`/v2/api-docs`。；这里的配置主要用户一些特殊情况，比如服务自身设置了context-path，或者修改了swagger默认的文档路径
+- `swagger-version`：swagger版本信息；如果不配置会使用全局的`swagger.butler.swagger-version`配置，默认为`2.0`。
 
 **第五步**：访问`http://localhost:11000/swagger-ui.html`
 
@@ -85,9 +93,92 @@ swagger.butler.resources[1].swagger-version=2.0
 
 > 代码示例具体可见`swagger-butler-example-static`目录
 
-**原理可见：[Spring Cloud Zuul中使用Swagger汇总API接口文档](http://blog.didispace.com/Spring-Cloud-Zuul-use-Swagger-API-doc/)**
+## Zuul的路由与SwaggerResources配置之间的关系
 
-## 与eureka整合
+如上示例中`<route-name>`展示了Zuul的路由名称与SwaggerResources配置之间的关联关系
+
+```properties
+zuul.routes.<route-name>.path=/service-b/**
+zuul.routes.<route-name>.url=http://localhost:10020/
+
+swagger.butler.resources.<route-name>.name=product-service
+swagger.butler.resources.<route-name>.api-docs-path=/xxx/v2/api-docs
+swagger.butler.resources.<route-name>.swagger-version=2.0
+```
+
+> 注意：在没有使用自动配置或整合服务治理的时候，要生成Swagger文档的时候，resources信息中的`name`属性是必须配置的，`api-docs-path`和`swagger-version`不配置的时候会使用默认的全局配置
+
+## 全局配置
+
+对于Swagger文档获取的全局配置内容，目前主要包含下面几个参数：
+
+```properties
+swagger.butler.api-docs-path=/v2/api-docs
+swagger.butler.swagger-version=2.0
+```
+
+## 使用Zuul中的路由自动配置
+
+在快速入门示例中我们配置了两个路由信息，同时为这两个路由信息配置了对应的Swagger信息来获取API文档详情，从1.1.0版本开始，增加了几个通过Zuul的路由配置来自动生成文档信息的参数，这样可以减少快速入门示例中那些繁琐的配置。对于快速入门例子，我们可以做如下改造：
+
+```properties
+# swagger resource
+zuul.routes.user.path=/service-a/**
+zuul.routes.user.url=http://localhost:10010/
+
+# swagger resource
+zuul.routes.product.path=/service-b/**
+zuul.routes.product.url=http://localhost:10020/
+
+# use zuul routes generate swagger resources
+swagger.butler.auto-generate-from-zuul-routes=true
+```
+
+在设置了`swagger.butler.auto-generate-from-zuul-routes=true`之后会默认的根据zuul中的路由信息来生成SwaggerResource。其中，原来resource中的`name`会使用zuul route的名称（比如：上面的user和product），而`api-docs-path`和`swagger-version`配置会使用默认的全局配置。如果resource中的三个参数有特殊情况要处理，可以采用快速入门中的配置方式来特别指定即可。
+
+### 忽略某些路由生成
+
+```properties
+# swagger resource
+zuul.routes.user.path=/service-a/**
+zuul.routes.user.url=http://localhost:10010/
+
+# swagger resource
+zuul.routes.product.path=/service-b/**
+zuul.routes.product.url=http://localhost:10020/
+
+# use zuul routes generate swagger resources
+swagger.butler.auto-generate-from-zuul-routes=true
+swagger.butler.ignore-routes=product
+```
+
+如上示例，通过`swagger.butler.ignore-routes`参数可以从当前配置的路由信息中排除某些路由内容不生成文档，配置内容为zuul中的路由名称，配置多个的时候使用`,`分割。
+
+> 注意：`swagger.butler.ignore-routes`和`swagger.butler.generate-routes`不能同时配置。这两个参数都不配置的时候，默认为zuul中的所有路由生成文档。
+
+### 指定某些路由生成
+
+```properties
+# swagger resource
+zuul.routes.user.path=/service-a/**
+zuul.routes.user.url=http://localhost:10010/
+
+# swagger resource
+zuul.routes.product.path=/service-b/**
+zuul.routes.product.url=http://localhost:10020/
+
+# use zuul routes generate swagger resources
+swagger.butler.auto-generate-from-zuul-routes=true
+swagger.butler.generate-routes=product
+```
+
+如上示例，通过`swagger.butler.generate-routes`参数可以从当前配置的路由信息中指定某些路由内容生成文档，配置内容为zuul中的路由名称，配置多个的时候使用`,`分割。
+
+> 注意：`swagger.butler.ignore-routes`和`swagger.butler.generate-routes`不能同时配置。这两个参数都不配置的时候，默认为zuul中的所有路由生成文档。
+
+## 与服务治理整合
+
+### 与eureka整合
 
 在整合eureka获取所有该注册中心下的API文档时，只需要在上面工程的基础上增加下面的配置：
 
@@ -98,7 +189,7 @@ swagger.butler.resources[1].swagger-version=2.0
     <dependency>
         <groupId>com.didispace</groupId>
         <artifactId>swagger-butler-core</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
     <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -123,19 +214,25 @@ public class EurekaApplication {
 }
 ```
 
-**第三步**：配置文件中增加eureka的配置，比如：
+**第三步**：修改配置文件，增加eureka的配置，比如：
 
 ```properties
 spring.application.name=swagger-butler-example-eureka
 server.port=11001
 
-
 eureka.client.service-url.defaultZone=http://eureka.didispace.com/eureka/
+
+swagger.butler.auto-generate-from-zuul-routes=true
+swagger.butler.generate-routes=swagger-service-a, swagger-service-b
+
+swagger.butler.resources.swagger-service-b.api-docs-path=/xxx/v2/api-docs
 ```
+
+由于整合了eureka之后，zuul会默认为所有注册服务创建路由配置（默认的路由名为服务名），所以只需要通过`swagger.butler.auto-generate-from-zuul-routes=true`参数开启根据路由信息生成文档配置的功能，配合`swagger.butler.ignore-routes`和`swagger.butler.generate-routes`参数就可以指定要生成的范围了，如果某些服务需要特殊配置，也可以通过`wagger.butler.resources.*`的配置来覆盖默认设置，比如上面的`swagger.butler.resources.swagger-service-b.api-docs-path=/xxx/v2/api-docs`指定了`swagger-service-b`服务获取swagger文档的请求路径为`/xxx/v2/api-docs`。
 
 > 代码示例具体可见`swagger-butler-example-eureka`目录
 
-## 与consul整合 
+### 与consul整合 
 
 在整合eureka获取所有该注册中心下的API文档时，只需要在上面工程的基础上增加下面的配置：
 
@@ -146,7 +243,7 @@ eureka.client.service-url.defaultZone=http://eureka.didispace.com/eureka/
     <dependency>
         <groupId>com.didispace</groupId>
         <artifactId>swagger-butler-core</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
     <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -179,7 +276,14 @@ server.port=11002
 
 spring.cloud.consul.host=localhost
 spring.cloud.consul.port=8500
+
+swagger.butler.auto-generate-from-zuul-routes=true
+swagger.butler.generate-routes=swagger-service-a, swagger-service-b
+
+swagger.butler.resources.swagger-service-b.api-docs-path=/xxx/v2/api-docs
 ```
+
+这里除了consul自身的配置之外，其他内容与整合eureka时候的是一样的。
 
 > 代码示例具体可见`swagger-butler-example-consul`目录
 

@@ -39,7 +39,7 @@ Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通�
     <dependency>
         <groupId>com.didispace</groupId>
         <artifactId>swagger-butler-core</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </dependency>
 </dependencies>
 ```
@@ -189,7 +189,7 @@ swagger.butler.generate-routes=product
     <dependency>
         <groupId>com.didispace</groupId>
         <artifactId>swagger-butler-core</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </dependency>
     <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -243,7 +243,7 @@ swagger.butler.resources.swagger-service-b.api-docs-path=/xxx/v2/api-docs
     <dependency>
         <groupId>com.didispace</groupId>
         <artifactId>swagger-butler-core</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </dependency>
     <dependency>
         <groupId>org.springframework.cloud</groupId>

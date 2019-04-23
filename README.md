@@ -11,7 +11,7 @@ Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通�
 
 - 我的博客：http://blog.didispace.com
 - 我们社区：http://www.spring4all.com
-- 知识星球（深度交流与问答）：https://t.xiaomiquan.com/zfEiY3v
+- 知识星球：https://t.xiaomiquan.com/zfEiY3v
 - Spring Boot基础教程：http://blog.didispace.com/Spring-Boot%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/
 - Spring Cloud基础教程：http://blog.didispace.com/Spring-Cloud%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/
 - 公益调试Eureka：http://eureka.didispace.com
@@ -32,14 +32,14 @@ Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通�
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.10.RELEASE</version>
+    <version>2.0.0.RELEASE</version>
 </parent>
 
 <dependencies>
     <dependency>
         <groupId>com.didispace</groupId>
         <artifactId>swagger-butler-core</artifactId>
-        <version>1.2.0</version>
+        <version>2.0.0</version>
     </dependency>
 </dependencies>
 ```
@@ -87,9 +87,15 @@ swagger.butler.resources.product.swagger-version=2.0
 - `api-docs-path`：要获取的swagger文档的具体路径；如果不配置会使用全局的`swagger.butler.api-docs-path`配置，默认为`/v2/api-docs`。；这里的配置主要用户一些特殊情况，比如服务自身设置了context-path，或者修改了swagger默认的文档路径
 - `swagger-version`：swagger版本信息；如果不配置会使用全局的`swagger.butler.swagger-version`配置，默认为`2.0`。
 
-**第五步**：访问`http://localhost:11000/swagger-ui.html`
+**第五步**：查看聚合文档。
 
-![Example](https://github.com/dyc87112/swagger-butler/blob/master/static/example.png?raw=true)
+原生文档：访问`http://localhost:11000/swagger-ui.html`
+
+![Example-1](https://github.com/dyc87112/swagger-butler/blob/master/static/example.png?raw=true)
+
+增强文档：访问`http://localhost:11000/doc.html`
+
+![Example-2](https://github.com/dyc87112/swagger-butler/blob/master/static/example-2.png?raw=true)
 
 > 代码示例具体可见`swagger-butler-example-static`目录
 

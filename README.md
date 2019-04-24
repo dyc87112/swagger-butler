@@ -18,6 +18,15 @@ Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通�
 
 # 使用手册
 
+## 版本说明
+
+swagger-butler的使用版本与Spring Boot版本直接相关，对应关系如下；
+
+| Spring Boot版本 | swagger-butler版本 |
+|---|---|
+|1.x|1.x|
+|2.x|2.x|
+
 ## 快速入门 
 
 该工具的时候非常简单，先通过下面几步简单入门：

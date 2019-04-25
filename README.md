@@ -11,15 +11,6 @@ Swagger Butler是一个基于Swagger与Zuul构建的API文档汇集工具。通�
 - Github：https://github.com/dyc87112/swagger-butler
 - Gitee：https://gitee.com/didispace/swagger-butler
 
-**推荐内容**
-
-- 我的博客：http://blog.didispace.com
-- 我们社区：http://www.spring4all.com
-- 知识星球：https://t.xiaomiquan.com/zfEiY3v
-- Spring Boot基础教程：http://blog.didispace.com/Spring-Boot%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/
-- Spring Cloud基础教程：http://blog.didispace.com/Spring-Cloud%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/
-- 公益调试Eureka：http://eureka.didispace.com
-
 # 使用手册
 
 ## 版本说明
@@ -305,6 +296,14 @@ swagger.butler.resources.swagger-service-b.api-docs-path=/xxx/v2/api-docs
 # 贡献者
 
 - [程序猿DD](https://github.com/dyc87112)
+
+# 推荐内容
+
+- [我的博客](http://blog.didispace.com)
+- [知识星球](https://t.xiaomiquan.com/zfEiY3v)
+- [Spring Boot基础教程](http://blog.didispace.com/Spring-Boot%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/)
+- [Spring Cloud基础教程](http://blog.didispace.com/Spring-Cloud%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B/)
+- [公益调试Eureka](http://eureka.didispace.com)
 
 # 公众号
 

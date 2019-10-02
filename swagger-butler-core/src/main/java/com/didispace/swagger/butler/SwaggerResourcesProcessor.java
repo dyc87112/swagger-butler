@@ -6,8 +6,7 @@ import org.springframework.cloud.netflix.zuul.filters.RouteLocator;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SwaggerResourcesProcessor implements SwaggerResourcesProvider {
 
@@ -22,6 +21,7 @@ public class SwaggerResourcesProcessor implements SwaggerResourcesProvider {
         List<SwaggerResource> resources = new ArrayList<>();
 
         List<Route> routes = routeLocator.getRoutes();
+        Map<String, SwaggerResource> resourceMap = new LinkedHashMap<>();
         for (Route route : routes) {
             String routeName = route.getId();
 
@@ -56,8 +56,13 @@ public class SwaggerResourcesProcessor implements SwaggerResourcesProvider {
                 swaggerVersion = resourceProperties.getSwaggerVersion();
             }
 
-            resources.add(swaggerResource(name, location, swaggerVersion));
+            //resources.add(swaggerResource(name, location, swaggerVersion));
+            //routeName去重
+            resourceMap.put(routeName, swaggerResource(name, location, swaggerVersion));
+        }
 
+        for (SwaggerResource swaggerResource : resourceMap.values()) {
+            resources.add(swaggerResource);
         }
 
         return resources;

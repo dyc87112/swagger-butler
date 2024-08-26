@@ -42,7 +42,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.java>1.8</version.java>
-        <version.swagger>2.9.2</version.swagger>
+        <version.swagger>2.10.0</version.swagger>
         <version.spring-boot>2.0.0.RELEASE</version.spring-boot>
         <version.spring-cloud>Finchley.SR1</version.spring-cloud>
     </properties>
